@@ -14,11 +14,8 @@ public class ChatBot {
         int age = guessUserAge();
         countToNumber();
         testProgrammingKnowledge();
-
-        // Placeholder for future levels
-        // Uncomment these lines when ready to add levels 2 and 3
-        // tellStory(name, age);
-        // dayOfWeekPhrase();
+        tellStory(name, age);
+        dayOfWeekPhrase();
     }
 
     public void greetUser() {
@@ -37,9 +34,6 @@ public class ChatBot {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("I will ask you a few questions to guess your age.");
-
-        System.out.print("What is your favorite cartoon from childhood? ");
-        String cartoon = scanner.nextLine();
 
         System.out.print("Do you remember life before smartphones? (yes/no) ");
         String beforeSmartphones = scanner.nextLine().toLowerCase();
@@ -61,16 +55,25 @@ public class ChatBot {
             firstSocialMedia = scanner.nextLine().toLowerCase();
         }
 
+        System.out.print("Which was your favorite cartoon from childhood? (spongebob, pokemon, looney tunes, teletubbies): ");
+        String cartoon = scanner.nextLine().toLowerCase();
+
+        while (!cartoon.equals("spongebob") &&
+                !cartoon.equals("pokemon") &&
+                !cartoon.equals("looney tunes") &&
+                !cartoon.equals("teletubbies")) {
+            System.out.print("Invalid input. Please enter one of the following: spongebob, pokemon, looney tunes, teletubbies: ");
+            cartoon = scanner.nextLine().toLowerCase();
+        }
+
         int ageGuess = estimateAge(cartoon, beforeSmartphones, firstSocialMedia);
 
         System.out.println("Based on your answers, I guess your age is around " + ageGuess + " years old!");
         return ageGuess;
     }
-    // a series of conditional statements to estimate the age based on the user's answers
-    // 'private', can only be accessed within the same class in which it is defined.
-    // This helps to encapsulate the internal workings of the class and protect the data from being accessed or modified directly from outside the class.
+
     private int estimateAge(String cartoon, String beforeSmartphones, String firstSocialMedia) {
-        int age = 25; // Default starting point, can be adjusted based on assumptions or requirements.
+        int age = 20; // Adjusted starting point
 
         if (beforeSmartphones.equals("yes")) {
             age += 10; // This expression increments the age variable by 10.
@@ -80,18 +83,37 @@ public class ChatBot {
 
         switch (firstSocialMedia) {
             case "myspace":
-                age += 10;
-                break;
-            case "facebook":
                 age += 5;
                 break;
+            case "facebook":
+                age += 3;
+                break;
             case "instagram":
-                age -= 5;
+                age -= 2;
                 break;
             case "tiktok":
-                age -= 10;
+                age -= 5;
                 break;
             default:
+                break;
+        }
+
+        // Adjust age based on favorite cartoon
+        switch (cartoon) {
+            case "spongebob":
+                age -= 3;
+                break;
+            case "pokemon":
+                age += 2;
+                break;
+            case "looney tunes":
+                age += 5;
+                break;
+            case "teletubbies":
+                age -= 5;
+                break;
+            default:
+                // No change for unrecognized cartoons
                 break;
         }
 
@@ -103,8 +125,8 @@ public class ChatBot {
         System.out.print("Enter a number for me to count to: ");
         int number = scanner.nextInt();
         for (int i = 0; i <= number; i++) {
-        // header of a for loop
-            // loop initializes 'i' to 0, checks if 'i' is less than or equal to number, prints 'i', increments 'i' by 1, and repeats until 'i' exceeds number.
+            // header of a for loop
+            // initializes 'i' to 0, checks if 'i' is less than or equal to number, prints 'i', increments 'i' by 1, and repeats until 'i' exceeds number.
             System.out.println(i);
         }
     }
@@ -130,10 +152,6 @@ public class ChatBot {
         }
     }
 
-    // Placeholder for level 2 and 3 methods
-    // Uncomment these methods when ready to add levels 2 and 3
-
-    /*
     public void tellStory(String name, int age) {
         System.out.println("Once upon a time, there was a person named " + name + " who was " + age + " years old.");
         System.out.println(name + " loved to learn about programming and spent many hours coding.");
@@ -147,29 +165,28 @@ public class ChatBot {
 
         switch (day) {
             case 1:
-                System.out.println("I'm a little buggy on Mondays.");
+                System.out.println("Mondays are the perfect day to set new goals, start fresh, and chase my dreams with a big smile.");
                 break;
             case 2:
-                System.out.println("Tuesdays are for troubleshooting.");
+                System.out.println("On Tuesdays I build momentum, tackle new challenges, and make great strides towards my goals.");
                 break;
             case 3:
-                System.out.println("Wednesdays are wonderful.");
+                System.out.println("Wednesdays are midweek vibes—it's a great time to reflect on what I've achieved so far and gear up to finish the week strong.");
                 break;
             case 4:
-                System.out.println("Thursdays are terrific.");
+                System.out.println("On Thursdays, I can almost see the weekend from here. It's the perfect day to power through tasks and start wrapping up the week.");
                 break;
             case 5:
-                System.out.println("Fridays are fabulous.");
+                System.out.println("Fridays: I've worked hard all week, and now it's time to wrap things up! TGIF!!");
                 break;
             case 6:
-                System.out.println("Saturdays are super.");
+                System.out.println("Saturdays is all about enjoying my time, doing what I love, and recharging for the week ahead.");
                 break;
             case 7:
-                System.out.println("Sundays are serene.");
+                System.out.println("Ah, Sunday! It's the perfect day to relax, reflect, and prepare for the week ahead.");
                 break;
             default:
                 System.out.println("Invalid input. Please enter a number from 1 to 7.");
         }
     }
-    */
 }
