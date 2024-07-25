@@ -3,9 +3,12 @@ package org.example;
 import java.util.Scanner;
 
 public class ChatBot {
+    private static final Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
         ChatBot bot = new ChatBot();
         bot.run();
+        scanner.close(); // Close the scanner resource when done
     }
 
     public void run() {
@@ -23,7 +26,6 @@ public class ChatBot {
     }
 
     public String askUserName() {
-        Scanner scanner = new Scanner(System.in);
         System.out.print("What's your name? ");
         String name = scanner.nextLine();
         System.out.println("Nice to meet you, " + name + "!");
@@ -31,54 +33,45 @@ public class ChatBot {
     }
 
     public int guessUserAge() {
-        Scanner scanner = new Scanner(System.in);
-
         System.out.println("I will ask you a few questions to guess your age.");
 
         System.out.print("Do you remember life before smartphones? (yes/no) ");
-        String beforeSmartphones = scanner.nextLine().toLowerCase();
-
-        // A while loop ensures that the users input is valid.
-        while (!beforeSmartphones.equals("yes") && !beforeSmartphones.equals("no")) {
-            System.out.print("Invalid input. Please enter 'yes' or 'no': ");
-            beforeSmartphones = scanner.nextLine().toLowerCase();
-        }
+        String beforeSmartphones = getValidInput(new String[]{"yes", "no"});
 
         System.out.print("Which social media platform did you first sign up for? (myspace, facebook, instagram, tiktok) ");
-        String firstSocialMedia = scanner.nextLine().toLowerCase();
+        String firstSocialMedia = getValidInput(new String[]{"myspace", "facebook", "instagram", "tiktok"});
 
-        while (!firstSocialMedia.equals("myspace") &&
-                !firstSocialMedia.equals("facebook") &&
-                !firstSocialMedia.equals("instagram") &&
-                !firstSocialMedia.equals("tiktok")) {
-            System.out.print("Invalid input. Please enter one of the following: myspace, facebook, instagram, tiktok: ");
-            firstSocialMedia = scanner.nextLine().toLowerCase();
-        }
+        System.out.print("What is your birth month? (1-12): ");
+        int birthMonth = getValidIntInput(1, 12);
 
-        System.out.print("Which was your favorite cartoon from childhood? (spongebob, pokemon, looney tunes, teletubbies): ");
-        String cartoon = scanner.nextLine().toLowerCase();
+        System.out.print("What is your zodiac sign? ");
+        String zodiacSign = scanner.nextLine().toLowerCase();
 
-        while (!cartoon.equals("spongebob") &&
-                !cartoon.equals("pokemon") &&
-                !cartoon.equals("looney tunes") &&
-                !cartoon.equals("teletubbies")) {
-            System.out.print("Invalid input. Please enter one of the following: spongebob, pokemon, looney tunes, teletubbies: ");
-            cartoon = scanner.nextLine().toLowerCase();
-        }
-
-        int ageGuess = estimateAge(cartoon, beforeSmartphones, firstSocialMedia);
+        int ageGuess = estimateAge(beforeSmartphones, firstSocialMedia, birthMonth, zodiacSign);
 
         System.out.println("Based on your answers, I guess your age is around " + ageGuess + " years old!");
+
+        int low = 0;
+        int high = 100;
+        while (!confirmAge(ageGuess)) {
+            if (refineAgeGuess(ageGuess).equals("higher")) {
+                low = ageGuess + 1;
+            } else {
+                high = ageGuess - 1;
+            }
+            ageGuess = (low + high) / 2;
+            System.out.println("I will guess your age is around " + ageGuess + " years old.");
+        }
         return ageGuess;
     }
 
-    private int estimateAge(String cartoon, String beforeSmartphones, String firstSocialMedia) {
-        int age = 20; // Adjusted starting point
+    private int estimateAge(String beforeSmartphones, String firstSocialMedia, int birthMonth, String zodiacSign) {
+        int age = 20;
 
         if (beforeSmartphones.equals("yes")) {
-            age += 10; // This expression increments the age variable by 10.
+            age += 15;
         } else {
-            age -= 5; // This expression decrements the age variable by 5.
+            age -= 5;
         }
 
         switch (firstSocialMedia) {
@@ -94,45 +87,43 @@ public class ChatBot {
             case "tiktok":
                 age -= 5;
                 break;
-            default:
-                break;
         }
 
-        // Adjust age based on favorite cartoon
-        switch (cartoon) {
-            case "spongebob":
-                age -= 3;
-                break;
-            case "pokemon":
-                age += 2;
-                break;
-            case "looney tunes":
-                age += 5;
-                break;
-            case "teletubbies":
-                age -= 5;
-                break;
-            default:
-                // No change for unrecognized cartoons
-                break;
+        if (birthMonth <= 6) {
+            age += 2;
+        } else {
+            age -= 2;
+        }
+
+        if (zodiacSign.equals("aries") || zodiacSign.equals("leo") || zodiacSign.equals("sagittarius")) {
+            age += 1;
+        } else if (zodiacSign.equals("taurus") || zodiacSign.equals("virgo") || zodiacSign.equals("capricorn")) {
+            age -= 1;
         }
 
         return age;
     }
 
+    private boolean confirmAge(int age) {
+        System.out.print("Is my guess correct? (yes/no) ");
+        return getValidInput(new String[]{"yes", "no"}).equals("yes");
+    }
+
+    private String refineAgeGuess(int currentGuess) {
+        System.out.print("Is your age higher or lower than " + currentGuess + "? (higher/lower) ");
+        return getValidInput(new String[]{"higher", "lower"});
+    }
+
     public void countToNumber() {
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Enter a number for me to count to: ");
         int number = scanner.nextInt();
         for (int i = 0; i <= number; i++) {
-            // header of a for loop
-            // initializes 'i' to 0, checks if 'i' is less than or equal to number, prints 'i', increments 'i' by 1, and repeats until 'i' exceeds number.
             System.out.println(i);
         }
+        scanner.nextLine(); // consume the remaining newline
     }
 
     public void testProgrammingKnowledge() {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Let's test your programming knowledge.");
         System.out.println("What is the correct way to declare a variable to store an integer value in Java?");
         System.out.println("1. int num = 1;");
@@ -143,6 +134,7 @@ public class ChatBot {
         while (true) {
             System.out.print("Enter your answer (1, 2, 3, or 4): ");
             int answer = scanner.nextInt();
+            scanner.nextLine(); // consume the remaining newline
             if (answer == 1) {
                 System.out.println("Congratulations! That is the correct answer.");
                 break;
@@ -159,9 +151,8 @@ public class ChatBot {
     }
 
     public void dayOfWeekPhrase() {
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Enter a number from 1 to 7 to know what I enjoy about each day: ");
-        int day = scanner.nextInt();
+        int day = getValidIntInput(1, 7);
 
         switch (day) {
             case 1:
@@ -185,8 +176,39 @@ public class ChatBot {
             case 7:
                 System.out.println("Ah, Sunday! It's the perfect day to relax, reflect, and prepare for the week ahead.");
                 break;
-            default:
-                System.out.println("Invalid input. Please enter a number from 1 to 7.");
+        }
+    }
+
+    private String getValidInput(String[] validInputs) {
+        String input;
+        while (true) {
+            input = scanner.nextLine().toLowerCase();
+            for (String validInput : validInputs) {
+                if (input.equals(validInput)) {
+                    return input;
+                }
+            }
+            System.out.print("Invalid input. Please enter one of the following: ");
+            for (String validInput : validInputs) {
+                System.out.print(validInput + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    private int getValidIntInput(int min, int max) {
+        int input;
+        while (true) {
+            if (scanner.hasNextInt()) {
+                input = scanner.nextInt();
+                scanner.nextLine(); // consume the remaining newline
+                if (input >= min && input <= max) {
+                    return input;
+                }
+            } else {
+                scanner.next(); // discard invalid input
+            }
+            System.out.print("Invalid input. Please enter a number between " + min + " and " + max + ": ");
         }
     }
 }
